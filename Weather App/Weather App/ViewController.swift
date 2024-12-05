@@ -11,19 +11,45 @@ let width = UIScreen.main.bounds.width;
 let height = UIScreen.main.bounds.height;
 
 class ViewController: UIViewController {
-
+    
+    private lazy var customView: UIView = {
+        let view = UIView(frame: .zero)
+        
+        view.backgroundColor = .green
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return (
+            view
+        )
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        NSLog("viewDidLoad")
         
-        let label = UILabel(frame: CGRect(x: 0, y: 50, width: width / 2, height: height / 2))
-        
-        label.font = UIFont(name: "Arial", size: 30)
-        label.text = "First Application"
-        
-        self.view.addSubview(label)
+        setupView()
     }
-
-
+    
+    private func setupView(){
+        view.backgroundColor = .white
+        
+        setHierarchy()
+        
+        setConstants()
+        
+    }
+    
+    private func setConstants(){
+        NSLayoutConstraint.activate([
+            customView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
+            customView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
+            customView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -50),
+            customView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
+        ])
+    }
+    
+    private func setHierarchy() {
+        view.addSubview(customView)
+    }
 }
 
