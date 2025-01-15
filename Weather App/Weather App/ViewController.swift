@@ -35,11 +35,11 @@ class ViewController: UIViewController {
         
         setHierarchy()
         
-        setConstants()
+        setConstranits()
         
     }
     
-    private func setConstants(){
+    private func setConstranits(){
         NSLayoutConstraint.activate([
             customView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
             customView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
