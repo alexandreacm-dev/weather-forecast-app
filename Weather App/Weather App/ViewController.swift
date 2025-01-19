@@ -28,7 +28,7 @@ class ViewController: UIViewController {
         let image = UIImageView(frame: .zero)
         
         image.image = UIImage(named: "cloud")
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
         
         return image
