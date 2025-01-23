@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         
-        imageView.image = UIImage(named: "bg")
+        imageView.image = UIImage.bgImage
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -28,7 +28,7 @@ class ViewController: UIViewController {
     private lazy var weatherIcon: UIImageView = {
         let image = UIImageView(frame: .zero)
         
-        image.image = UIImage(named: "sun")
+        image.image = UIImage.sunImage
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
         

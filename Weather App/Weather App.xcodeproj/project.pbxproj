@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1D6682882D41B11F00522A5B /* HourlyForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6682872D41B11F00522A5B /* HourlyForecastCollectionViewCell.swift */; };
 		1D66828A2D42004000522A5B /* Color+Estensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6682892D42004000522A5B /* Color+Estensions.swift */; };
+		1D6A5EBA2D42D68800246F7E /* Image+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6A5EB92D42D68800246F7E /* Image+Extensions.swift */; };
 		1D7D9D0F2CFBC28C001DD798 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D9D0E2CFBC28C001DD798 /* AppDelegate.swift */; };
 		1D7D9D112CFBC28C001DD798 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D9D102CFBC28C001DD798 /* SceneDelegate.swift */; };
 		1D7D9D132CFBC28C001DD798 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7D9D122CFBC28C001DD798 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* Begin PBXFileReference section */
 		1D6682872D41B11F00522A5B /* HourlyForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		1D6682892D42004000522A5B /* Color+Estensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Estensions.swift"; sourceTree = "<group>"; };
+		1D6A5EB92D42D68800246F7E /* Image+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Extensions.swift"; sourceTree = "<group>"; };
 		1D7D9D0B2CFBC28C001DD798 /* Weather App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weather App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D7D9D0E2CFBC28C001DD798 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1D7D9D102CFBC28C001DD798 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				1D7D9D0E2CFBC28C001DD798 /* AppDelegate.swift */,
 				1D7D9D102CFBC28C001DD798 /* SceneDelegate.swift */,
 				1D7D9D122CFBC28C001DD798 /* ViewController.swift */,
+				1D6A5EB92D42D68800246F7E /* Image+Extensions.swift */,
 				1D6682872D41B11F00522A5B /* HourlyForecastCollectionViewCell.swift */,
 				1D6682892D42004000522A5B /* Color+Estensions.swift */,
 				1D7D9D172CFBC28E001DD798 /* Assets.xcassets */,
@@ -143,6 +146,7 @@
 				1D66828A2D42004000522A5B /* Color+Estensions.swift in Sources */,
 				1D7D9D132CFBC28C001DD798 /* ViewController.swift in Sources */,
 				1D7D9D0F2CFBC28C001DD798 /* AppDelegate.swift in Sources */,
+				1D6A5EBA2D42D68800246F7E /* Image+Extensions.swift in Sources */,
 				1D6682882D41B11F00522A5B /* HourlyForecastCollectionViewCell.swift in Sources */,
 				1D7D9D112CFBC28C001DD798 /* SceneDelegate.swift in Sources */,
 			);

@@ -14,7 +14,7 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
     
-        imageView.image = UIImage(named: "sun")
+        imageView.image = UIImage.sunImage
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
