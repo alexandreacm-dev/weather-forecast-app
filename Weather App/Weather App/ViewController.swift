@@ -215,8 +215,10 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.dataSource = self
-        tableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
+        tableView.register(DailyForecastTableViewCell.self,
+                           forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
         
+        tableView.separatorColor = UIColor.whiteColor
         return tableView
     }()
     
