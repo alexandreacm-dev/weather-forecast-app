@@ -64,7 +64,6 @@ class ViewController: UIViewController {
         label.font = .systemFont(ofSize: 70, weight: .bold)
         label.textColor = UIColor.primaryColor
         label.textAlignment = .left
-        label.text = "25°C"
         
         return label
         
@@ -215,21 +214,40 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.dataSource = self
-        tableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
+        tableView.register(DailyForecastTableViewCell.self,
+                           forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
         
+        tableView.separatorColor = UIColor.whiteColor
         return tableView
     }()
+    
+    private let service = Service()
+    private var city = City(lat: "-23.6814346", lon: "-46.9249599", name: "Canoas, Brasil")
+    private var forecastResponse: ForecastResponse?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        fetchData()
+    }
+    
+    private func fetchData(){
+        service.fecthData(city: city) { [weak self] response in
+            self?.forecastResponse = response
+            DispatchQueue.main.async {
+                self?.loadData()
+            }
+        }
+    }
+    
+    private func loadData(){
+        temperaturyLabel.text = "\(String(describing:forecastResponse?.current.tempC))"
     }
     
     private func setupView(){
         view.backgroundColor = .white
         setHierarchy()
         setConstraints()
-        
     }
     
     private func setHierarchy() {
@@ -288,7 +306,7 @@ class ViewController: UIViewController {
             hourlyForecastLabel.topAnchor.constraint(equalTo: defaultStackView.bottomAnchor, constant: 29),
             hourlyForecastLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35),
             hourlyForecastLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -35),
-            hourlyForecastLabel.widthAnchor.constraint(equalToConstant: 318),
+//            hourlyForecastLabel.widthAnchor.constraint(equalToConstant: 318),
             
             hourlyCollectionView.topAnchor.constraint(equalTo: hourlyForecastLabel.bottomAnchor, constant: 22),
             hourlyCollectionView.heightAnchor.constraint(equalToConstant: 84),
