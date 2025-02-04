@@ -64,7 +64,6 @@ class ViewController: UIViewController {
         label.font = .systemFont(ofSize: 70, weight: .bold)
         label.textColor = UIColor.primaryColor
         label.textAlignment = .left
-        label.text = "25°C"
         
         return label
         
@@ -223,14 +222,26 @@ class ViewController: UIViewController {
     }()
     
     private let service = Service()
-    private var city = City(lat: "-23.6814346", lon: "-46.9249599", name: "São Paulo")
+    private var city = City(lat: "-23.6814346", lon: "-46.9249599", name: "Canoas, Brasil")
+    private var forecastResponse: ForecastResponse?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        service.fecthData(city: city) { data in
-            print(data)
+        fetchData()
+    }
+    
+    private func fetchData(){
+        service.fecthData(city: city) { [weak self] response in
+            self?.forecastResponse = response
+            DispatchQueue.main.async {
+                self?.loadData()
+            }
         }
+    }
+    
+    private func loadData(){
+        temperaturyLabel.text = "\(String(describing:forecastResponse?.current.tempC))"
     }
     
     private func setupView(){
