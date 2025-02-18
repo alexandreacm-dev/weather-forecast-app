@@ -11,13 +11,11 @@ import UIKit
 //let height = UIScreen.main.bounds.height;
 
 class ViewController: UIViewController {
-    
-    let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-    
+
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         
-        imageView.image = UIImage.bgImage
+//        imageView.image = UIImage.bgImage
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -88,7 +86,6 @@ class ViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = UIColor.whiteColor
-        label.text = "1000mm"
         
         return label
         
@@ -125,7 +122,6 @@ class ViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = UIColor.whiteColor
-        label.text = "10km/h"
         
         return label
         
@@ -222,7 +218,7 @@ class ViewController: UIViewController {
     }()
     
     private let service = Service()
-    private var city = City(lat: "-23.6814346", lon: "-46.9249599", name: "Canoas, Brasil")
+    private var city = City(lat: "-29.9333", lon: "-51.1833", name: "Canoas")
     private var forecastResponse: ForecastResponse?
     
     override func viewDidLoad() {
@@ -234,6 +230,7 @@ class ViewController: UIViewController {
     private func fetchData(){
         service.fecthData(city: city) { [weak self] response in
             self?.forecastResponse = response
+            
             DispatchQueue.main.async {
                 self?.loadData()
             }
@@ -241,11 +238,19 @@ class ViewController: UIViewController {
     }
     
     private func loadData(){
-        temperaturyLabel.text = "\(String(describing:forecastResponse?.current.tempC))"
+        cityLabel.text = city.name
+        temperaturyLabel.text = "\(forecastResponse?.currentConditions.temp.toCelsius() ?? "0°C")"
+        humidityValueLabel.text = "\(forecastResponse?.currentConditions.humidity.toMillimeters() ?? "0mm")"
+        windValueLabel.text = "\(forecastResponse?.currentConditions.windspeed.toKm() ?? "0km/h")"
+        
+        hourlyCollectionView.reloadData()
     }
     
     private func setupView(){
         view.backgroundColor = .white
+        let isDay = forecastResponse?.currentConditions.datetime.isDayTime() ?? false
+        
+        backgroundView.image = isDay ? UIImage.bgDay : UIImage.bgNight
         setHierarchy()
         setConstraints()
     }
@@ -331,12 +336,17 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.items.count
+        return forecastResponse?.days.first?.hours?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath)
-                
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as? HourlyForecastCollectionViewCell else { return UICollectionViewCell() }
+        
+        
+        let forecast = forecastResponse?.days.first?.hours?[indexPath.row]
+        
+        cell.loadData(hourly: forecast?.datetime.toFormattDate(), icon: UIImage.sun, temp: forecast?.temp.toCelsius())
+        
         return cell
     }
     
@@ -344,7 +354,7 @@ extension ViewController: UICollectionViewDataSource {
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        items.count
+        10
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

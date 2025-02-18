@@ -37,9 +37,39 @@ extension Int {
     }
 }
 
+extension String {
+    func isDayTime() -> Bool {
+        let date = Date(timeIntervalSince1970: TimeInterval(self)!)
+        let hour = Calendar.current.component(.hour, from: date)
+        
+        let dayStartHour = 6
+        let dayEndHour = 18
+        
+        return hour >= dayStartHour && hour < dayEndHour
+    }
+    
+    func toFormattDate() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .short
+    
+        let diffHours2  = self.split(separator: ":")[0]
+        let diffMinutes2  = self.split(separator: ":")[1]
+        
+        
+        return dateFormatter.string(from: Date())
+    }
+}
+
 extension Double {
     func toCelsius () -> String {
         "\(Int(self))°C"
     }
+    
+    func toMillimeters () -> String {
+         "\(Int(self)) mm"
+    }
+    
+    func toKm() -> String {
+         "\(Int(self)) km/h"
+    }
 }
-
