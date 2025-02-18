@@ -28,7 +28,6 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 10, weight: .semibold)
         label.textColor = UIColor.whiteColor
         label.textAlignment = .center
-        label.text = "13:00"
         
         return label
         
@@ -41,7 +40,6 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.textColor = UIColor.whiteColor
         label.textAlignment = .center
-        label.text = "25°C"
         
         return label
         
@@ -99,5 +97,11 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
             
             iconImageView.heightAnchor.constraint(equalToConstant: 33)
         ])
+    }
+    
+    func loadData(hourly: String?, icon: UIImage?, temp: String?){
+        hourlyLabel.text = hourly
+        temperaturyLabel.text = temp
+        iconImageView.image = icon
     }
 }

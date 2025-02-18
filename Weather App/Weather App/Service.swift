@@ -13,12 +13,13 @@ struct City {
 
 class Service {
     
-    private let baseURL = "http://api.weatherapi.com/v1/forecast.json"
-    private let apiKey = "63d5b88069b84e82ac2160229250102"
+    private let baseURL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
+    private let apiKey = "LESV8J4TKMSU66V26T53Y39BM"
+    private let jsonDecoder = JSONDecoder()
     
     func fecthData(city: City, _ completion: @escaping (ForecastResponse?) -> Void) {
         
-        let urlString = "\(baseURL)?key=\(apiKey)&q=\(city.name)&days=1"
+        let urlString = "\(baseURL)\(city.name)?unitGroup=metric&key=\(apiKey)&contentType=json"
         guard let url = URL(string: urlString) else { return }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
@@ -27,9 +28,10 @@ class Service {
                 return
             }
             
+    
             do {
-                let jsonDecoder = JSONDecoder()
-                let forecastResponse = try jsonDecoder.decode(ForecastResponse.self, from: data)
+                
+                let forecastResponse = try self.jsonDecoder.decode(ForecastResponse.self, from: data)
                 completion(forecastResponse)
             } catch {
                 print(error)
@@ -45,141 +47,78 @@ class Service {
 
 // MARK: - ForecastResponse
 struct ForecastResponse: Codable {
-    let location: Location
-    let current: Current
-    let forecast: Forecast
+    let queryCost: Int
+    let latitude, longitude: Double
+    let resolvedAddress, address, timezone: String
+    let tzoffset: Int
+    let days: [CurrentConditions]
+//    let stations: [String: Station]
+    let currentConditions: CurrentConditions
 }
 
-// MARK: - Current
-struct Current: Codable {
-    let lastUpdatedEpoch: Int?
-    let lastUpdated: String?
-    let tempC, tempF: Double
-    let isDay: Int
-    let condition: Condition
-    let windMph, windKph: Double
-    let windDegree: Int
-    let windDir: WindDir
-    let pressureMB: Int
-    let pressureIn, precipMm, precipIn: Double
-    let humidity, cloud: Int
-    let feelslikeC, feelslikeF, windchillC, windchillF: Double
-    let heatindexC, heatindexF, dewpointC, dewpointF: Double
-    let visKM, visMiles: Int
-    let uv, gustMph, gustKph: Double
-    let timeEpoch: Int?
-    let time: String?
-    let snowCM, willItRain, chanceOfRain, willItSnow: Int?
-    let chanceOfSnow: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case lastUpdatedEpoch = "last_updated_epoch"
-        case lastUpdated = "last_updated"
-        case tempC = "temp_c"
-        case tempF = "temp_f"
-        case isDay = "is_day"
-        case condition
-        case windMph = "wind_mph"
-        case windKph = "wind_kph"
-        case windDegree = "wind_degree"
-        case windDir = "wind_dir"
-        case pressureMB = "pressure_mb"
-        case pressureIn = "pressure_in"
-        case precipMm = "precip_mm"
-        case precipIn = "precip_in"
-        case humidity, cloud
-        case feelslikeC = "feelslike_c"
-        case feelslikeF = "feelslike_f"
-        case windchillC = "windchill_c"
-        case windchillF = "windchill_f"
-        case heatindexC = "heatindex_c"
-        case heatindexF = "heatindex_f"
-        case dewpointC = "dewpoint_c"
-        case dewpointF = "dewpoint_f"
-        case visKM = "vis_km"
-        case visMiles = "vis_miles"
-        case uv
-        case gustMph = "gust_mph"
-        case gustKph = "gust_kph"
-        case timeEpoch = "time_epoch"
-        case time
-        case snowCM = "snow_cm"
-        case willItRain = "will_it_rain"
-        case chanceOfRain = "chance_of_rain"
-        case willItSnow = "will_it_snow"
-        case chanceOfSnow = "chance_of_snow"
-    }
+// MARK: - CurrentConditions
+struct CurrentConditions: Codable {
+    let datetime: String
+    let datetimeEpoch: Int
+    let temp, feelslike, humidity, dew: Double
+    let precip, precipprob: Double
+    let snow, snowdepth: Int
+    let preciptype: [Icon]?
+    let windgust, windspeed, winddir, pressure: Double
+    let visibility, cloudcover, solarradiation, solarenergy: Double
+    let uvindex: Int
+    let conditions: Conditions
+    let icon: Icon
+//    let stations: [ID]?
+    let source: Source
+    let sunrise: String?
+    let sunriseEpoch: Int?
+    let sunset: String?
+    let sunsetEpoch: Int?
+    let moonphase, tempmax, tempmin, feelslikemax: Double?
+    let feelslikemin, precipcover: Double?
+    let severerisk: Int?
+    let description: String?
+    let hours: [CurrentConditions]?
 }
 
-// MARK: - Condition
-struct Condition: Codable {
-    let text, icon: String
-    let code: Int
+enum Conditions: String, Codable {
+    case clear = "Clear"
+    case overcast = "Overcast"
+    case partiallyCloudy = "Partially cloudy"
+    case rain = "Rain"
+    case rainOvercast = "Rain, Overcast"
+    case rainPartiallyCloudy = "Rain, Partially cloudy"
 }
 
-enum WindDir: String, Codable {
-    case e = "E"
-    case ene = "ENE"
+enum Icon: String, Codable {
+    case clearDay = "clear-day"
+    case clearNight = "clear-night"
+    case cloudy = "cloudy"
+    case partlyCloudyDay = "partly-cloudy-day"
+    case partlyCloudyNight = "partly-cloudy-night"
+    case rain = "rain"
 }
 
-// MARK: - Forecast
-struct Forecast: Codable {
-    let forecastday: [Forecastday]
+enum Source: String, Codable {
+    case comb = "comb"
+    case fcst = "fcst"
+    case obs = "obs"
 }
 
-// MARK: - Forecastday
-struct Forecastday: Codable {
-    let date: String
-    let dateEpoch: Int
-    let day: Day
-    let hour: [Current]
-
-    enum CodingKeys: String, CodingKey {
-        case date
-        case dateEpoch = "date_epoch"
-        case day, hour
-    }
-}
-
-// MARK: - Day
-struct Day: Codable {
-    let maxtempC, maxtempF, mintempC, mintempF: Double
-    let avgtempC: Int
-    let avgtempF, maxwindMph, maxwindKph, totalprecipMm: Double
-    let totalprecipIn: Double
-    let totalsnowCM: Int
-    let avgvisKM: Double
-    let avgvisMiles, avghumidity, dailyWillItRain, dailyChanceOfRain: Int
-    let dailyWillItSnow, dailyChanceOfSnow: Int
-    let condition: Condition
-    let uv: Double
-
-    enum CodingKeys: String, CodingKey {
-        case maxtempC = "maxtemp_c"
-        case maxtempF = "maxtemp_f"
-        case mintempC = "mintemp_c"
-        case mintempF = "mintemp_f"
-        case avgtempC = "avgtemp_c"
-        case avgtempF = "avgtemp_f"
-        case maxwindMph = "maxwind_mph"
-        case maxwindKph = "maxwind_kph"
-        case totalprecipMm = "totalprecip_mm"
-        case totalprecipIn = "totalprecip_in"
-        case totalsnowCM = "totalsnow_cm"
-        case avgvisKM = "avgvis_km"
-        case avgvisMiles = "avgvis_miles"
-        case avghumidity
-        case dailyWillItRain = "daily_will_it_rain"
-        case dailyChanceOfRain = "daily_chance_of_rain"
-        case dailyWillItSnow = "daily_will_it_snow"
-        case dailyChanceOfSnow = "daily_chance_of_snow"
-        case condition, uv
-    }
-}
-
-// MARK: - Location
-struct Location: Codable {
-    let name, region, country: String
-    let lat, lon: Double
-    let localtime: String
-}
+//enum ID: String, Codable {
+//    case e7074 = "E7074"
+//    case f6070 = "F6070"
+//    case sbco = "SBCO"
+//    case sbpa = "SBPA"
+//}
+//
+//// MARK: - Station
+//struct Station: Codable {
+//    let distance: Int
+//    let latitude, longitude: Double
+//    let useCount: Int
+//    let id: ID
+//    let name: String
+//    let quality, contribution: Int
+//}
