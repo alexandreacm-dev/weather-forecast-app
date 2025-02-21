@@ -27,7 +27,6 @@ class ViewController: UIViewController {
     private lazy var weatherIcon: UIImageView = {
         let image = UIImageView(frame: .zero)
         
-        image.image = UIImage.sunImage
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
         
@@ -59,12 +58,23 @@ class ViewController: UIViewController {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 70, weight: .bold)
+        label.font = .systemFont(ofSize: 60, weight: .bold)
         label.textColor = UIColor.primaryColor
         label.textAlignment = .left
         
         return label
         
+    }()
+    
+    private lazy var feelsLikeLabel: UILabel = {
+        let label = UILabel()
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 20, weight: .regular)
+        label.textColor = UIColor.subTitle
+        label.textAlignment = .center
+        
+        return label
     }()
     
     
@@ -210,6 +220,7 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(DailyForecastTableViewCell.self,
                            forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
         
@@ -240,17 +251,23 @@ class ViewController: UIViewController {
     private func loadData(){
         cityLabel.text = city.name
         temperaturyLabel.text = "\(forecastResponse?.currentConditions.temp.toCelsius() ?? "0°C")"
+        feelsLikeLabel.text = "Sensação térmica de \(forecastResponse?.currentConditions.feelslike.toCelsius() ?? "0°C")"
         humidityValueLabel.text = "\(forecastResponse?.currentConditions.humidity.toMillimeters() ?? "0mm")"
         windValueLabel.text = "\(forecastResponse?.currentConditions.windspeed.toKm() ?? "0km/h")"
+        weatherIcon.image = UIImage(named: "\(forecastResponse?.currentConditions.icon ?? Icon.clearDay)")
+        
+        if forecastResponse?.currentConditions.datetime.isDayTime() ?? true {
+            backgroundView.image =  UIImage.bgDay
+        } else {
+            backgroundView.image = UIImage.bgNight
+        }
         
         hourlyCollectionView.reloadData()
+        dailyForecastTableView.reloadData()
     }
     
     private func setupView(){
         view.backgroundColor = .white
-        let isDay = forecastResponse?.currentConditions.datetime.isDayTime() ?? false
-        
-        backgroundView.image = isDay ? UIImage.bgDay : UIImage.bgNight
         setHierarchy()
         setConstraints()
     }
@@ -266,6 +283,7 @@ class ViewController: UIViewController {
         
         headerView.addSubview(cityLabel)
         headerView.addSubview(temperaturyLabel)
+        headerView.addSubview(feelsLikeLabel)
         headerView.addSubview(weatherIcon)
     }
     
@@ -281,7 +299,7 @@ class ViewController: UIViewController {
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 60),
             headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 35),
             headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -35),
-            headerView.heightAnchor.constraint(equalToConstant: 150)
+            headerView.heightAnchor.constraint(equalToConstant: 180)
         ])
         
         NSLayoutConstraint.activate([
@@ -292,6 +310,10 @@ class ViewController: UIViewController {
             
             temperaturyLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 12),
             temperaturyLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor,constant: 26),
+            
+            feelsLikeLabel.topAnchor.constraint(equalTo: temperaturyLabel.bottomAnchor, constant: 10),
+            feelsLikeLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),
+            feelsLikeLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
             
             weatherIcon.widthAnchor.constraint(equalToConstant: 86),
             weatherIcon.heightAnchor.constraint(equalToConstant: 86),
@@ -345,21 +367,29 @@ extension ViewController: UICollectionViewDataSource {
         
         let forecast = forecastResponse?.days.first?.hours?[indexPath.row]
         
-        cell.loadData(hourly: forecast?.datetime.toFormattDate(), icon: UIImage.sun, temp: forecast?.temp.toCelsius())
+        cell.loadData(hourly: forecast?.datetime, icon: UIImage(named: "\(forecast?.icon ?? Icon.clearDay)"), temp: forecast?.temp.toCelsius())
         
         return cell
     }
     
 }
 
-extension ViewController: UITableViewDataSource {
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+       return forecastResponse?.days.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath)
+        guard let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath) as? DailyForecastTableViewCell else { return UITableViewCell()}
+        
+        let forecast = forecastResponse?.days[indexPath.row]
+        
+        cell.loadData(weekDay: forecast?.datetime.formattDate(), min: forecast?.tempmin?.toCelsius() , max: forecast?.tempmax?.toCelsius(), icon: UIImage(named: "\(forecast?.icon ?? Icon.clearDay)"))
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        60
     }
 }

@@ -39,7 +39,10 @@ extension Int {
 
 extension String {
     func isDayTime() -> Bool {
-        let date = Date(timeIntervalSince1970: TimeInterval(self)!)
+//        let date = Date(timeIntervalSince1970: TimeInterval(self)!)
+        let dateFormatter = DateFormatter();
+        
+        let date = dateFormatter.date(from: self) ?? Date()
         let hour = Calendar.current.component(.hour, from: date)
         
         let dayStartHour = 6
@@ -48,15 +51,14 @@ extension String {
         return hour >= dayStartHour && hour < dayEndHour
     }
     
-    func toFormattDate() -> String {
+    func formattDate() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .short
-    
-        let diffHours2  = self.split(separator: ":")[0]
-        let diffMinutes2  = self.split(separator: ":")[1]
         
+        let today = dateFormatter.date(from: self) ?? Date.now
+        dateFormatter.locale =  Locale(identifier: "pt_BR")
+        dateFormatter.dateFormat = "E"
         
-        return dateFormatter.string(from: Date())
+        return dateFormatter.string(from:today ).uppercased()
     }
 }
 
