@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         
-//        imageView.image = UIImage.bgImage
+        imageView.image = UIImage.bgImage
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -27,6 +27,7 @@ class ViewController: UIViewController {
     private lazy var weatherIcon: UIImageView = {
         let image = UIImageView(frame: .zero)
         
+        image.image = UIImage.sun
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
         
@@ -61,6 +62,7 @@ class ViewController: UIViewController {
         label.font = .systemFont(ofSize: 60, weight: .bold)
         label.textColor = UIColor.primaryColor
         label.textAlignment = .left
+//        label.text = "32°C"
         
         return label
         
@@ -73,6 +75,7 @@ class ViewController: UIViewController {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textColor = UIColor.subTitle
         label.textAlignment = .center
+//        label.text = "32°C"
         
         return label
     }()
@@ -96,6 +99,7 @@ class ViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = UIColor.whiteColor
+//        label.text = "62mm"
         
         return label
         
@@ -132,6 +136,7 @@ class ViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = UIColor.whiteColor
+//        label.text = "32 km/h"
         
         return label
         
@@ -250,13 +255,13 @@ class ViewController: UIViewController {
     
     private func loadData(){
         cityLabel.text = city.name
-        temperaturyLabel.text = "\(forecastResponse?.currentConditions.temp.toCelsius() ?? "0°C")"
-        feelsLikeLabel.text = "Sensação térmica de \(forecastResponse?.currentConditions.feelslike.toCelsius() ?? "0°C")"
-        humidityValueLabel.text = "\(forecastResponse?.currentConditions.humidity.toMillimeters() ?? "0mm")"
-        windValueLabel.text = "\(forecastResponse?.currentConditions.windspeed.toKm() ?? "0km/h")"
-        weatherIcon.image = UIImage(named: "\(forecastResponse?.currentConditions.icon ?? Icon.clearDay)")
+        temperaturyLabel.text = "\(forecastResponse?.current.tempC.toCelsius() ?? "0°C")"
+        feelsLikeLabel.text = "Sensação térmica de \(forecastResponse?.current.feelslikeC.toCelsius() ?? "0°C")"
+        humidityValueLabel.text = "\(forecastResponse?.current.humidity.toMillimeters() ?? "0mm")"
+        windValueLabel.text = "\(forecastResponse?.current.windKph.toKm() ?? "0km/h")"
+//        weatherIcon.image = UIImage(named: "\(forecastResponse?.results.conditionSlug ?? "clean_day")")
         
-        if forecastResponse?.currentConditions.datetime.isDayTime() ?? true {
+        if ((forecastResponse?.current.isDay) != nil)  {
             backgroundView.image =  UIImage.bgDay
         } else {
             backgroundView.image = UIImage.bgNight
@@ -358,16 +363,16 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return forecastResponse?.days.first?.hours?.count ?? 0
+        return  forecastResponse?.forecast.forecastday.first?.hour.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as? HourlyForecastCollectionViewCell else { return UICollectionViewCell() }
         
         
-        let forecast = forecastResponse?.days.first?.hours?[indexPath.row]
+        let forecast = forecastResponse?.forecast.forecastday.first?.hour[indexPath.row]
         
-        cell.loadData(hourly: forecast?.datetime, icon: UIImage(named: "\(forecast?.icon ?? Icon.clearDay)"), temp: forecast?.temp.toCelsius())
+        cell.loadData(hourly: forecast?.time, icon: UIImage.cloudImage, temp: forecast?.tempC.toCelsius())
         
         return cell
     }
@@ -376,15 +381,15 @@ extension ViewController: UICollectionViewDataSource {
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return forecastResponse?.days.count ?? 0
+        return forecastResponse?.forecast.forecastday.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath) as? DailyForecastTableViewCell else { return UITableViewCell()}
         
-        let forecast = forecastResponse?.days[indexPath.row]
+        let forecast = forecastResponse?.forecast.forecastday[indexPath.row]
         
-        cell.loadData(weekDay: forecast?.datetime.formattDate(), min: forecast?.tempmin?.toCelsius() , max: forecast?.tempmax?.toCelsius(), icon: UIImage(named: "\(forecast?.icon ?? Icon.clearDay)"))
+        cell.loadData(weekDay: forecast?.date, min: forecast?.day.maxtempC.toCelsius() , max: forecast?.day.mintempC.toCelsius(), icon: UIImage.sunImage)
         
         return cell
     }
