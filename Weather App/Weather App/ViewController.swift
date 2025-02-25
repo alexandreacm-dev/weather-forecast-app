@@ -228,6 +228,21 @@ class ViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var loaderView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.white
+        return view
+    }()
+    
+    private lazy var loader: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large);
+        
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return indicator
+    }()
+    
     private let service = Service()
     private var city = City(lat: "-29.9333", lon: "-51.1833", name: "Canoas")
     private var forecastResponse: ForecastResponse?
@@ -239,6 +254,8 @@ class ViewController: UIViewController {
     }
     
     private func fetchData(){
+        showLoader()
+        
         service.fecthData(city: city) { [weak self] response in
             self?.forecastResponse = response
             
@@ -256,7 +273,7 @@ class ViewController: UIViewController {
         windValueLabel.text = "\(forecastResponse?.currentConditions.windspeed.toKm() ?? "0km/h")"
         weatherIcon.image = UIImage(named: "\(forecastResponse?.currentConditions.icon ?? Icon.clearDay)")
         
-        if forecastResponse?.currentConditions.datetime.isDayTime() ?? true {
+        if (forecastResponse?.currentConditions.datetime.isDay()) != nil {
             backgroundView.image =  UIImage.bgDay
         } else {
             backgroundView.image = UIImage.bgNight
@@ -264,6 +281,8 @@ class ViewController: UIViewController {
         
         hourlyCollectionView.reloadData()
         dailyForecastTableView.reloadData()
+        
+        hideLoader()
     }
     
     private func setupView(){
@@ -280,11 +299,13 @@ class ViewController: UIViewController {
         view.addSubview(hourlyCollectionView)
         view.addSubview(dailyForecastLabel)
         view.addSubview(dailyForecastTableView)
+        view.addSubview(loaderView)
         
         headerView.addSubview(cityLabel)
         headerView.addSubview(temperaturyLabel)
         headerView.addSubview(feelsLikeLabel)
         headerView.addSubview(weatherIcon)
+        loaderView.addSubview(loader)
     }
     
     private func setConstraints(){
@@ -352,6 +373,25 @@ class ViewController: UIViewController {
             dailyForecastTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             
         ])
+        
+        NSLayoutConstraint.activate([
+            loaderView.topAnchor.constraint(equalTo: view.topAnchor),
+            loaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loaderView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loader.centerXAnchor.constraint(equalTo: loaderView.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: loaderView.centerYAnchor)
+        ])
+    }
+    
+    private func showLoader() {
+        loaderView.isHidden = false
+        loader.startAnimating()
+    }
+    
+    private func hideLoader() {
+        loaderView.isHidden = true
+        loader.stopAnimating()
     }
 }
 
@@ -367,7 +407,7 @@ extension ViewController: UICollectionViewDataSource {
         
         let forecast = forecastResponse?.days.first?.hours?[indexPath.row]
         
-        cell.loadData(hourly: forecast?.datetime, icon: UIImage(named: "\(forecast?.icon ?? Icon.clearDay)"), temp: forecast?.temp.toCelsius())
+        cell.loadData(hourly: forecast?.datetime.formatTime(), icon: UIImage(named: "\(forecast?.icon ?? Icon.clearDay)"), temp: forecast?.temp.toCelsius())
         
         return cell
     }

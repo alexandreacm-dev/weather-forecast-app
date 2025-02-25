@@ -38,7 +38,7 @@ extension Int {
 }
 
 extension String {
-    func isDayTime() -> Bool {
+    func isDay() -> Bool {
 //        let date = Date(timeIntervalSince1970: TimeInterval(self)!)
         let dateFormatter = DateFormatter();
         
@@ -51,14 +51,36 @@ extension String {
         return hour >= dayStartHour && hour < dayEndHour
     }
     
+    func formatTime() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"
+            
+        let date = dateFormatter.date(from: self) ?? Date()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        dateFormatter.locale = Locale(identifier: "pt-PT")
+        
+        let hour = Calendar.current.component(.hour, from: date)
+        let min = Calendar.current.component(.minute, from: date)
+        
+//        print(dateFormatter.string(from: date).split(separator: ":")[0])
+        let formattedTime = min == 0 ?  "\(hour):\(min)0" : "\(hour):\(min)"
+        
+        return formattedTime
+    }
+    
     func formattDate() -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
         
-        let today = dateFormatter.date(from: self) ?? Date.now
-        dateFormatter.locale =  Locale(identifier: "pt_BR")
-        dateFormatter.dateFormat = "E"
-        
-        return dateFormatter.string(from:today ).uppercased()
+        let today = dateFormatter.date(from: self)
+    
+        dateFormatter.dateFormat = "EEE"
+        dateFormatter.locale = Locale(identifier: "pt-PT")
+    
+
+        let weekDay = dateFormatter.string(from: today ?? Date()).replacingOccurrences(of: ".", with: "").uppercased()
+        return weekDay
     }
 }
 

@@ -28,7 +28,7 @@ class DailyForecastTableViewCell: UITableViewCell {
         
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.textColor = UIColor.whiteColor
 //        label.text = "min 20°C"
         
@@ -40,7 +40,7 @@ class DailyForecastTableViewCell: UITableViewCell {
         
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.textColor = UIColor.whiteColor
 //        label.text = "max 29°C"
         
@@ -66,7 +66,7 @@ class DailyForecastTableViewCell: UITableViewCell {
         
         stackView.axis = .horizontal
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.spacing = 10
+        stackView.spacing = 12
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(
             top: 16,
@@ -101,15 +101,15 @@ class DailyForecastTableViewCell: UITableViewCell {
     private func setConstraints(){
         stackView.setConstrantsToParent(contentView)
         NSLayoutConstraint.activate([
-            weekDayLabel.widthAnchor.constraint(lessThanOrEqualToConstant:  50),
+            weekDayLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 50),
 //            iconImageView.widthAnchor.constraint(equalToConstant: 20),
         ])
     }
     
     func loadData(weekDay: String?, min: String?, max: String?, icon: UIImage?) {
         weekDayLabel.text = weekDay
-        minTemperatureLabel.text = "min \(min ?? "min 0°C")"
-        maxTemperatureLabel.text = "max \(max ?? "max 0°C")"
+        minTemperatureLabel.text = "Min \(min ?? "Min 0°C")"
+        maxTemperatureLabel.text = "Max \(max ?? "Max 0°C")"
         iconImageView.image = icon
     }
     

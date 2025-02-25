@@ -13,13 +13,13 @@ struct City {
 
 class Service {
     
-    private let baseURL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
+    private let baseURL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"
     private let apiKey = "LESV8J4TKMSU66V26T53Y39BM"
     private let jsonDecoder = JSONDecoder()
     
     func fecthData(city: City, _ completion: @escaping (ForecastResponse?) -> Void) {
         
-        let urlString = "\(baseURL)\(city.name)?unitGroup=metric&key=\(apiKey)&contentType=json"
+        let urlString = "\(baseURL)/\(city.lat),\(city.lon)?unitGroup=metric&key=\(apiKey)&contentType=json"
         guard let url = URL(string: urlString) else { return }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
