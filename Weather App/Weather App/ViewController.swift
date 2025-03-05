@@ -174,7 +174,7 @@ class ViewController: UIViewController {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = UIFont.semiBoldFont
         label.textColor = UIColor.whiteColor
         label.text = "PREVISÃO POR HORA"
         label.textAlignment = .center
@@ -268,7 +268,7 @@ class ViewController: UIViewController {
     private func loadData(){
         cityLabel.text = city.name
         temperaturyLabel.text = "\(forecastResponse?.currentConditions.temp.toCelsius() ?? "0°C")"
-        feelsLikeLabel.text = "Sensação térmica de \(forecastResponse?.currentConditions.feelslike.toCelsius() ?? "0°C")"
+        feelsLikeLabel.text = "Sensação térmica \(forecastResponse?.currentConditions.feelslike.toCelsius() ?? "0°C")"
         humidityValueLabel.text = "\(forecastResponse?.currentConditions.humidity.toMillimeters() ?? "0mm")"
         windValueLabel.text = "\(forecastResponse?.currentConditions.windspeed.toKm() ?? "0km/h")"
         weatherIcon.image = UIImage(named: "\(forecastResponse?.currentConditions.icon ?? Icon.clearDay)")
