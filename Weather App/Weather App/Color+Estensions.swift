@@ -13,4 +13,5 @@ extension UIColor {
     static let softGrayColor = UIColor(named: "softGray")
     static let primaryColor = UIColor(named: "primaryColor")
     static let secondaryColor = UIColor(named: "secondaryColor")
+    static let subTitleColor = UIColor(named: "subTitle")
 }

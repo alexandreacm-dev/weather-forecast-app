@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="" height="80" title="" src=".github/icLogo.png" />
+  <img alt="" height="80" title="" src=".github/iccon.png" />
 </h1>
 
 <p align="center">
